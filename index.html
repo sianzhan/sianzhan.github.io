@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Test by sianzhan</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
+<!--    <link rel="stylesheet" href="stylesheets/styles.css"> -->
+<!--    <link rel="stylesheet" href="stylesheets/github-light.css"> -->
     <meta name="viewport" content="width=device-width">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -15,21 +15,45 @@
   <body>
     <div id="text"></div>
     <script>
-    var xhr = new XMLHttpRequest();
-    var response;
-    xhr.onload = function(){
-        if(xhr.status === 200){
-            response = xhr.responseText;
-            response = response.replace(/\n/g,"<br/>");
-            document.getElementById('text').innerHTML = response;
-        }else{
-            document.getElementById('text').innerHTML = "";
+    var context = document.getElementById('text');
+    ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/index', '', true, loadNovel);
+    function loadNovel(response){
+        for(i = 0, l = response; i <= l; i++){
+            getNovel(1, i);
         }
     }
-    xhr.open('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/Vol1/0.txt', true);
-    xhr.send();  
-    </script>
-    <script src="javascripts/scale.fix.js"></script>
-    
+    function processNovel(response){
+        response = response.replace(/\n/g,"<br/>");
+        context.innerHTML += response;
+    }
+    function getNovel(vol_no, chp_no, getNovel){
+        ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/Vol'+vol_no+'/'+chp_no+'.txt', '', true, processNovel);
+    }
+    function ajax(method, url, args, async, callback){
+        if(!(method == undefined || url == undefined || args == undefined || async == undefined || callback == undefined)){
+            var xhr = new XMLHttpRequest();
+            var response;
+            xhr.onload = function(){
+                if(xhr.status === 200){
+                    response = xhr.responseText;
+                }else{
+                    response = false;
+                }
+                callback(response);
+            }
+            if(method == 'GET'){
+                xhr.open('GET', url + '?' + args, async);
+                xhr.send();
+            }else if(method == 'POST'){
+                xhr.open('POST', url, async);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.send(args);  
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    </script>    
   </body>
 </html>
