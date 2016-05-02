@@ -13,7 +13,6 @@
     <![endif]-->
   </head>
   <body>
-  testt
     <div id="text"></div>
     <script>
     var xhr = new XMLHttpRequest();
@@ -21,6 +20,7 @@
     xhr.onload = function(){
         if(xhr.status === 200){
             response = xhr.responseText;
+            response = response.replace(/\n/g,"<br/>");
             document.getElementById('text').innerHTML = response;
         }else{
             document.getElementById('text').innerHTML = "";
