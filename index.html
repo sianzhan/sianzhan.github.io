@@ -24,7 +24,7 @@
     }
     function processNovel(response){
         response = response.replace(/\n/g,"<br/>");
-        context.innerHTML += response;
+        context.innerHTML += response + "<br/>";
     }
     function getNovel(vol_no, chp_no, getNovel){
         ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/Vol'+vol_no+'/'+chp_no+'.txt', '', true, processNovel);
