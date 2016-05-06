@@ -13,21 +13,25 @@
     <![endif]-->
   </head>
   <body>
+    
     <div id="text"></div>
     <script>
     var context = document.getElementById('text');
-    ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/index', '', true, loadNovel);
-    function loadNovel(response){
-        for(i = 0, l = response; i <= l; i++){
-            getNovel(1, i);
-        }
+    var indexes = [];
+    var volume = parseGET('vol') != null ? parseGET('vol') : 1;
+    var chapter = parseGET('chp') != null ? parseGET('chp') : 0;;
+    window.history.pushState({}, document.title, window.location.pathname +'?vol='+volume+'&chp='+chapter);
+    ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/index', '', true, loadIndex);
+    function loadIndex(response){
+        indexes = response.split('\n');
+    }
+    getNovel(volume, chapter)
+    function getNovel(vol_no, chp_no){
+        ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/Vol'+vol_no+'/'+chp_no+'.txt', '', true, processNovel);
     }
     function processNovel(response){
         response = response.replace(/\n/g,"<br/>");
         context.innerHTML += response + "<br/>";
-    }
-    function getNovel(vol_no, chp_no, getNovel){
-        ajax('GET', 'https://raw.githubusercontent.com/sianzhan/Wei-The-Scientific-Lad/dev/Vol'+vol_no+'/'+chp_no+'.txt', '', true, processNovel);
     }
     function ajax(method, url, args, async, callback){
         if(!(method == undefined || url == undefined || args == undefined || async == undefined || callback == undefined)){
@@ -53,6 +57,14 @@
         else{
             return false;
         }
+    }
+    function parseGET(param){
+        var url = window.location.href;
+        var regex = new RegExp('[?&]' + param + '=([^&]*)|&');
+        var results = regex.exec(url);
+        if (!results) return null;
+        if (!results[1]) return '';
+        return decodeURIComponent(results[1].replace(/\+/g, " "));
     }
     </script>    
   </body>
